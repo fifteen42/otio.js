@@ -1,6 +1,6 @@
 # otio.js
 
-[![npm version](https://img.shields.io/npm/v/opentimelineio.svg)](https://www.npmjs.com/package/opentimelineio)
+[![npm version](https://img.shields.io/npm/v/otio.js.svg)](https://www.npmjs.com/package/otio.js)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 JavaScript/TypeScript implementation of [OpenTimelineIO](http://opentimeline.io/) - an interchange format and API for editorial timeline information.
@@ -17,13 +17,13 @@ JavaScript/TypeScript implementation of [OpenTimelineIO](http://opentimeline.io/
 ## Installation
 
 ```bash
-npm install opentimelineio
+npm install otio.js
 ```
 
 Or using yarn:
 
 ```bash
-yarn add opentimelineio
+yarn add otio.js
 ```
 
 ## Quick Start
@@ -31,7 +31,7 @@ yarn add opentimelineio
 ### Reading an OTIO File
 
 ```typescript
-import { readTimelineFromFile } from 'opentimelineio';
+import { readTimelineFromFile } from 'otio.js';
 
 // Read from URL
 const timeline = await readTimelineFromFile('/path/to/timeline.otio');
@@ -57,7 +57,7 @@ import {
   RationalTime,
   TimeRange,
   TrackKind,
-} from 'opentimelineio';
+} from 'otio.js';
 
 // Create a timeline
 const timeline = new Timeline('My Timeline');
@@ -94,7 +94,7 @@ console.log(jsonString);
 ### Working with Time
 
 ```typescript
-import { RationalTime, TimeRange } from 'opentimelineio';
+import { RationalTime, TimeRange } from 'otio.js';
 
 // Create time from frames
 const time1 = RationalTime.fromFrames(100, 24); // 100 frames at 24fps
@@ -122,7 +122,7 @@ console.log(range.durationSeconds()); // Duration in seconds
 ### Adding Markers
 
 ```typescript
-import { Marker, MarkerColor, TimeRange, RationalTime } from 'opentimelineio';
+import { Marker, MarkerColor, TimeRange, RationalTime } from 'otio.js';
 
 const marker = new Marker(
   'Important moment',
@@ -143,7 +143,7 @@ clip.markers.push(marker);
 <input type="file" id="otioFile" accept=".otio" />
 
 <script type="module">
-  import { OTIOAdapter } from 'opentimelineio';
+  import { OTIOAdapter } from 'otio.js';
 
   document.getElementById('otioFile').addEventListener('change', async (e) => {
     const file = e.target.files[0];
@@ -160,7 +160,7 @@ clip.markers.push(marker);
 ### Downloading a Timeline
 
 ```typescript
-import { downloadTimeline } from 'opentimelineio';
+import { downloadTimeline } from 'otio.js';
 
 // Download timeline as a file
 downloadTimeline(timeline, 'my-timeline.otio');
@@ -260,7 +260,7 @@ You can use otio.js directly in the browser via CDN:
 
 ```html
 <script type="module">
-  import { Timeline, readTimelineFromFile } from 'https://unpkg.com/opentimelineio@latest/dist/index.mjs';
+  import { Timeline, readTimelineFromFile } from 'https://unpkg.com/otio.js@latest/dist/index.mjs';
   
   const timeline = await readTimelineFromFile('/timeline.otio');
   console.log(timeline);
@@ -272,7 +272,7 @@ You can use otio.js directly in the browser via CDN:
 otio.js is written in TypeScript and includes full type definitions:
 
 ```typescript
-import type { Timeline, Clip, Track } from 'opentimelineio';
+import type { Timeline, Clip, Track } from 'otio.js';
 
 function processTimeline(timeline: Timeline): void {
   const clips: Clip[] = timeline.findClips();
@@ -334,8 +334,3 @@ This is an unofficial JavaScript implementation. The official OpenTimelineIO pro
 
 - [OpenTimelineIO](https://github.com/AcademySoftwareFoundation/OpenTimelineIO) - Official Python/C++ implementation
 - [OpenTimelineIO Documentation](https://opentimelineio.readthedocs.io/)
-
-## Acknowledgments
-
-OpenTimelineIO is an open-source project created and maintained by Pixar Animation Studios and the Academy Software Foundation.
-Javascript SDK for OpenTimelineIO
