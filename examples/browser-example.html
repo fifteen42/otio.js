@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTIO.js Browser Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .file-upload {
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 10px 0;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        button.secondary:hover {
+            background: #545b62;
+        }
+
+        .timeline-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+
+        .info-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .info-card p {
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .clip-list {
+            margin-top: 20px;
+        }
+
+        .clip-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .clip-item h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .clip-item p {
+            color: #666;
+            font-size: 14px;
+            margin: 3px 0;
+        }
+
+        .marker {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-top: 5px;
+        }
+
+        .marker.RED { background: #dc3545; color: white; }
+        .marker.GREEN { background: #28a745; color: white; }
+        .marker.BLUE { background: #007bff; color: white; }
+        .marker.YELLOW { background: #ffc107; color: black; }
+        .marker.ORANGE { background: #fd7e14; color: white; }
+
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎬 OTIO.js Browser Example</h1>
+    <p class="subtitle">Interactive OpenTimelineIO demonstration in the browser</p>
+
+    <div class="container">
+        <h2>Upload OTIO File</h2>
+        <div class="file-upload">
+            <input type="file" id="fileInput" accept=".otio,.json">
+            <button onclick="loadFile()">Load Timeline</button>
+            <button class="secondary" onclick="createExampleTimeline()">Create Example Timeline</button>
+        </div>
+    </div>
+
+    <div id="timelineContainer" class="container hidden">
+        <h2>Timeline Information</h2>
+        <div class="timeline-info">
+            <div class="info-card">
+                <h3>Timeline Name</h3>
+                <p id="timelineName">-</p>
+            </div>
+            <div class="info-card">
+                <h3>Duration</h3>
+                <p id="timelineDuration">-</p>
+            </div>
+            <div class="info-card">
+                <h3>Video Tracks</h3>
+                <p id="videoTracks">-</p>
+            </div>
+            <div class="info-card">
+                <h3>Audio Tracks</h3>
+                <p id="audioTracks">-</p>
+            </div>
+            <div class="info-card">
+                <h3>Total Clips</h3>
+                <p id="totalClips">-</p>
+            </div>
+        </div>
+
+        <button onclick="downloadCurrentTimeline()">Download Timeline</button>
+        <button class="secondary" onclick="showJSON()">Show JSON</button>
+    </div>
+
+    <div id="clipsContainer" class="container hidden">
+        <h2>Clips</h2>
+        <div id="clipsList" class="clip-list"></div>
+    </div>
+
+    <div id="jsonContainer" class="container hidden">
+        <h2>JSON Output</h2>
+        <pre id="jsonOutput"></pre>
+    </div>
+
+    <script type="module">
+        // Import from your built library
+        // In production, replace with: import { ... } from 'https://unpkg.com/opentimelineio@latest/dist/index.mjs';
+        import {
+            Timeline,
+            Stack,
+            Track,
+            Clip,
+            ExternalReference,
+            Marker,
+            MarkerColor,
+            RationalTime,
+            TimeRange,
+            TrackKind,
+            OTIOAdapter,
+            readTimelineFromString,
+        } from '../src/index.js';
+
+        let currentTimeline = null;
+
+        // Load file from input
+        window.loadFile = async function() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file first');
+                return;
+            }
+
+            try {
+                const timeline = await OTIOAdapter.readFromFileObject(file);
+                displayTimeline(timeline);
+            } catch (error) {
+                alert('Error loading file: ' + error.message);
+            }
+        };
+
+        // Create example timeline
+        window.createExampleTimeline = function() {
+            const timeline = new Timeline('Example Timeline');
+            const stack = new Stack('tracks');
+            const track = new Track('Video 1', [], TrackKind.VIDEO);
+
+            // Create some clips
+            for (let i = 1; i <= 5; i++) {
+                const clip = new Clip(
+                    `Clip ${i}`,
+                    new ExternalReference(`/media/clip${i}.mov`),
+                    new TimeRange(
+                        RationalTime.fromFrames(0, 24),
+                        RationalTime.fromFrames(100 + i * 20, 24)
+                    )
+                );
+
+                // Add a marker
+                const colors = [MarkerColor.RED, MarkerColor.GREEN, MarkerColor.BLUE, MarkerColor.YELLOW, MarkerColor.ORANGE];
+                clip.markers.push(
+                    new Marker(
+                        `Marker ${i}`,
+                        new TimeRange(RationalTime.fromFrames(10, 24), RationalTime.fromFrames(1, 24)),
+                        colors[i % colors.length],
+                        `This is marker ${i}`
+                    )
+                );
+
+                track.appendChild(clip);
+            }
+
+            stack.appendChild(track);
+            timeline.tracks = stack;
+
+            displayTimeline(timeline);
+        };
+
+        // Display timeline information
+        function displayTimeline(timeline) {
+            if (!timeline) {
+                alert('Invalid timeline');
+                return;
+            }
+
+            currentTimeline = timeline;
+
+            // Show containers
+            document.getElementById('timelineContainer').classList.remove('hidden');
+            document.getElementById('clipsContainer').classList.remove('hidden');
+
+            // Update info cards
+            document.getElementById('timelineName').textContent = timeline.name || 'Untitled';
+            
+            const duration = timeline.duration();
+            document.getElementById('timelineDuration').textContent = 
+                duration ? `${duration.toSeconds().toFixed(2)}s` : '0s';
+            
+            document.getElementById('videoTracks').textContent = timeline.videoTracks().length;
+            document.getElementById('audioTracks').textContent = timeline.audioTracks().length;
+            
+            const clips = timeline.findClips();
+            document.getElementById('totalClips').textContent = clips.length;
+
+            // Display clips
+            const clipsList = document.getElementById('clipsList');
+            clipsList.innerHTML = '';
+
+            clips.forEach((composable, index) => {
+                if (composable.schemaName() === 'Clip') {
+                    const clip = composable;
+                    const clipDiv = document.createElement('div');
+                    clipDiv.className = 'clip-item';
+
+                    const duration = clip.duration();
+                    const durationText = duration ? 
+                        `${duration.duration.toFrames()} frames (${duration.duration.toSeconds().toFixed(2)}s)` : 
+                        'N/A';
+
+                    let markersHTML = '';
+                    if (clip.markers.length > 0) {
+                        markersHTML = '<div>' + 
+                            clip.markers.map(m => 
+                                `<span class="marker ${m.color}">${m.name}</span>`
+                            ).join('') + 
+                        '</div>';
+                    }
+
+                    clipDiv.innerHTML = `
+                        <h4>${clip.name || `Clip ${index + 1}`}</h4>
+                        <p>Duration: ${durationText}</p>
+                        <p>Media: ${clip.mediaReference?.schemaName() || 'None'}</p>
+                        ${markersHTML}
+                    `;
+
+                    clipsList.appendChild(clipDiv);
+                }
+            });
+        }
+
+        // Download current timeline
+        window.downloadCurrentTimeline = function() {
+            if (!currentTimeline) {
+                alert('No timeline loaded');
+                return;
+            }
+
+            OTIOAdapter.downloadAsFile(currentTimeline, 'timeline.otio');
+        };
+
+        // Show JSON
+        window.showJSON = function() {
+            if (!currentTimeline) {
+                alert('No timeline loaded');
+                return;
+            }
+
+            const jsonContainer = document.getElementById('jsonContainer');
+            const jsonOutput = document.getElementById('jsonOutput');
+            
+            jsonOutput.textContent = currentTimeline.toJSONString(2);
+            jsonContainer.classList.remove('hidden');
+        };
+    </script>
+</body>
+</html>
+

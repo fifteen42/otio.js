@@ -1,0 +1,15 @@
+src
+examples
+node_modules
+.git
+.gitignore
+tsconfig.json
+vitest.config.ts
+.eslintrc.json
+.prettierrc
+*.test.ts
+__tests__
+coverage
+.DS_Store
+*.log
+

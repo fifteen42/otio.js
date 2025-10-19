@@ -1,0 +1,128 @@
+{
+  "OTIO_SCHEMA": "Timeline.1",
+  "name": "Sample Timeline",
+  "metadata": {
+    "project": "Sample Project",
+    "frameRate": 24
+  },
+  "global_start_time": {
+    "value": 0,
+    "rate": 24
+  },
+  "tracks": {
+    "OTIO_SCHEMA": "Stack.1",
+    "name": "tracks",
+    "children": [
+      {
+        "OTIO_SCHEMA": "Track.1",
+        "name": "Video Track 1",
+        "kind": "Video",
+        "children": [
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Clip 1",
+            "source_range": {
+              "start_time": {
+                "value": 0,
+                "rate": 24
+              },
+              "duration": {
+                "value": 120,
+                "rate": 24
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///media/clip1.mov",
+              "available_range": {
+                "start_time": {
+                  "value": 0,
+                  "rate": 24
+                },
+                "duration": {
+                  "value": 300,
+                  "rate": 24
+                }
+              }
+            },
+            "markers": [
+              {
+                "OTIO_SCHEMA": "Marker.1",
+                "name": "Start",
+                "marked_range": {
+                  "start_time": {
+                    "value": 0,
+                    "rate": 24
+                  },
+                  "duration": {
+                    "value": 1,
+                    "rate": 24
+                  }
+                },
+                "color": "GREEN",
+                "comment": "Beginning of the clip"
+              }
+            ]
+          },
+          {
+            "OTIO_SCHEMA": "Transition.1",
+            "name": "Cross Dissolve",
+            "transition_type": "SMPTE_Dissolve",
+            "in_offset": {
+              "value": 12,
+              "rate": 24
+            },
+            "out_offset": {
+              "value": 12,
+              "rate": 24
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Clip 2",
+            "source_range": {
+              "start_time": {
+                "value": 50,
+                "rate": 24
+              },
+              "duration": {
+                "value": 100,
+                "rate": 24
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///media/clip2.mov"
+            }
+          }
+        ]
+      },
+      {
+        "OTIO_SCHEMA": "Track.1",
+        "name": "Audio Track 1",
+        "kind": "Audio",
+        "children": [
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Audio Clip 1",
+            "source_range": {
+              "start_time": {
+                "value": 0,
+                "rate": 48000
+              },
+              "duration": {
+                "value": 240000,
+                "rate": 48000
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "target_url": "file:///media/audio1.wav"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+
