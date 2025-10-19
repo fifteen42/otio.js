@@ -1,5 +1,5 @@
 {
-  "name": "opentimelineio",
+  "name": "otio.js",
   "version": "0.1.0",
   "description": "JavaScript/TypeScript implementation of OpenTimelineIO - an interchange format for editorial timeline information",
   "main": "dist/index.js",
@@ -64,4 +64,3 @@
     "node": ">=16.0.0"
   }
 }
-
