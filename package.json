@@ -39,12 +39,16 @@
     "animation",
     "nle"
   ],
-  "author": "",
+  "author": "fifteen42",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/otio.js"
+    "url": "git+https://github.com/fifteen42/otio.js.git"
   },
+  "bugs": {
+    "url": "https://github.com/fifteen42/otio.js/issues"
+  },
+  "homepage": "https://github.com/fifteen42/otio.js#readme",
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
